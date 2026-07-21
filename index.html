@@ -302,10 +302,10 @@
 
     .table-row {
       display: grid;
-      grid-template-columns: 100px 1fr 120px 130px 100px 130px;
-      gap: 16px;
+      grid-template-columns: 110px 1fr 120px 140px 110px 150px;
+      gap: 12px;
       align-items: center;
-      padding: 16px 18px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--border);
       font-size: 13px;
     }
@@ -329,6 +329,9 @@
       text-transform: uppercase;
       font-size: 11px;
       letter-spacing: 0.05em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .track-badge {
@@ -977,6 +980,69 @@
       resize: vertical;
     }
 
+    /* ── Generate Assessment button states ── */
+    .btn-generate {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      font-size: 14px;
+      font-weight: 700;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(79,70,229,0.35);
+      transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+      letter-spacing: -0.01em;
+    }
+
+    .btn-generate:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 6px 18px rgba(79,70,229,0.45);
+    }
+
+    .btn-generate:active { transform: scale(0.98); }
+
+    .btn-generate.loading {
+      background: #6366F1;
+      cursor: not-allowed;
+      box-shadow: 0 4px 14px rgba(79,70,229,0.25);
+    }
+
+    .btn-generate.success {
+      background: #059669;
+      box-shadow: 0 4px 14px rgba(5,150,105,0.4);
+    }
+
+    .btn-generate-icon {
+      display: flex;
+      align-items: center;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes checkPop {
+      0%   { opacity:0; transform: scale(0.5); }
+      60%  { transform: scale(1.15); }
+      100% { opacity:1; transform: scale(1); }
+    }
+
+    .check-icon { animation: checkPop 0.3s ease-out both; }
+
     @media print {
       .user-profile, nav, .info-footer, .review-card, .metrics-grid, .side-stack {
         display: none !important;
@@ -1008,7 +1074,19 @@
 
   <header>
     <div class="brand" onclick="switchPage('dashboard-view')" role="button" tabindex="0" aria-label="Open assessment dashboard">
-      <div class="brand-logo">FR</div>
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- Fingerprint icon -->
+          <path d="M12 1C7.03 1 3 5.03 3 10c0 1.3.27 2.55.74 3.68" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M12 4c-3.31 0-6 2.69-6 6 0 .7.12 1.37.34 2" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M12 7a3 3 0 0 0-3 3c0 4 1.5 7 1.5 7" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M12 7a3 3 0 0 1 3 3c0 2-.4 3.8-1 5.3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M18 10c0-3.31-2.69-6-6-6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M21 10a9 9 0 0 0-9-9" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M15.5 17c-.5 1.2-1.1 2.1-1.5 2.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M18.8 13.5C19.6 12.5 20 11.3 20 10" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
       <span class="brand-name">GxP Finding Review</span>
     </div>
 
@@ -1129,7 +1207,7 @@
               <h2 class="form-section-title">1. Draft observation</h2>
               <div class="form-group">
                 <label for="observation-input">Draft observation / finding text <span class="required">*</span></label>
-                <textarea id="observation-input" class="form-control" required placeholder="Describe what was found, where it was found, the affected process and why it may matter...">Two study coordinators were found to be using a single shared login to the EDC system. Audit trail entries recorded under that account during the affected period cannot be attributed to a specific individual.</textarea>
+                <textarea id="observation-input" class="form-control" required placeholder="Describe what was found, where it was found, the affected process and why it may matter..."></textarea>
                 <p class="form-hint">State the condition and objective evidence. Avoid assuming classification in the wording.</p>
               </div>
             </div>
@@ -1139,7 +1217,7 @@
               <div class="form-row-2col">
                 <div class="form-group">
                   <label for="system-name">System name / ID</label>
-                  <input id="system-name" class="form-control" type="text" value="EDC-001" placeholder="e.g. EDC-001">
+                  <input id="system-name" class="form-control" type="text" placeholder="e.g. EDC-001">
                 </div>
                 <div class="form-group">
                   <label for="system-select">System type <span class="required">*</span></label>
@@ -1207,13 +1285,17 @@
               <h2 class="form-section-title">3. Objective evidence and scope</h2>
               <div class="form-group">
                 <label for="evidence-input">Objective evidence <span class="required">*</span></label>
-                <textarea id="evidence-input" class="form-control compact-textarea" required placeholder="List the records reviewed, screenshots, audit trail entries, interviews, procedures or other evidence...">User-access listing showed one generic coordinator account. Audit trail entries under the account were present during the reviewed period. Two coordinators confirmed using the credentials.</textarea>
+                <textarea id="evidence-input" class="form-control compact-textarea" required placeholder="List the records reviewed, screenshots, audit trail entries, interviews, procedures or other evidence..."></textarea>
               </div>
 
               <div class="form-row-3col">
                 <div class="form-group">
-                  <label for="date-range">Affected date range</label>
-                  <input id="date-range" class="form-control" type="text" placeholder="e.g. 01-Jun to 14-Jul-2026">
+                  <label>Affected date range</label>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <input id="date-range-from" class="form-control" type="date" title="From date" style="flex:1;">
+                    <span style="color:var(--muted);font-size:12px;white-space:nowrap;">to</span>
+                    <input id="date-range-to" class="form-control" type="date" title="To date" style="flex:1;">
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="scope-count">Records / users affected</label>
@@ -1231,19 +1313,19 @@
 
               <div class="form-group">
                 <label for="containment-input">Immediate correction or containment</label>
-                <textarea id="containment-input" class="form-control compact-textarea" placeholder="Describe any action already taken...">Shared credentials disabled pending issue of individual accounts.</textarea>
+                <textarea id="containment-input" class="form-control compact-textarea" placeholder="Describe any action already taken..."></textarea>
               </div>
             </div>
 
             <div class="form-section">
               <h2 class="form-section-title">4. Potential or actual impact</h2>
               <div class="checkbox-grid">
-                <label class="checkbox-item"><input type="checkbox" checked> Participant rights, safety or well-being</label>
-                <label class="checkbox-item"><input type="checkbox" checked> Reliability of trial results</label>
-                <label class="checkbox-item"><input type="checkbox" checked> Data integrity / attributability</label>
+                <label class="checkbox-item"><input type="checkbox"> Participant rights, safety or well-being</label>
+                <label class="checkbox-item"><input type="checkbox"> Reliability of trial results</label>
+                <label class="checkbox-item"><input type="checkbox"> Data integrity / attributability</label>
                 <label class="checkbox-item"><input type="checkbox"> Regulatory reporting timeline</label>
                 <label class="checkbox-item"><input type="checkbox"> Isolated occurrence</label>
-                <label class="checkbox-item"><input type="checkbox" checked> Potentially systemic</label>
+                <label class="checkbox-item"><input type="checkbox"> Potentially systemic</label>
               </div>
             </div>
 
@@ -1286,9 +1368,14 @@
               <span>Do not enter direct patient identifiers, credentials, passwords or unnecessary confidential study information.</span>
             </div>
 
-            <div style="display: flex; gap: 11px; justify-content: flex-end; flex-wrap: wrap;">
+            <div style="display: flex; gap: 11px; justify-content: flex-end; flex-wrap: wrap; align-items: center;">
               <button type="button" class="btn btn-secondary" onclick="switchPage('dashboard-view')">Cancel</button>
-              <button type="submit" class="btn">Generate assessment</button>
+              <button type="submit" id="generate-btn" class="btn btn-generate">
+                <span id="generate-btn-icon" class="btn-generate-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </span>
+                <span id="generate-btn-text">Generate Assessment</span>
+              </button>
             </div>
 
           </form>
@@ -1917,7 +2004,12 @@
 
       document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
       if (pageId === 'dashboard-view') document.getElementById('nav-dashboard').classList.add('active');
-      else if (pageId === 'new-assessment-view') document.getElementById('nav-new-assessment').classList.add('active');
+      else if (pageId === 'new-assessment-view') {
+        document.getElementById('nav-new-assessment').classList.add('active');
+        // Reset form to blank state on every open
+        const form = document.getElementById('new-assessment-form');
+        if (form) form.reset();
+      }
       else if (pageId === 'reference-view') document.getElementById('nav-reference').classList.add('active');
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1926,15 +2018,40 @@
     function handleFormSubmit(event) {
       event.preventDefault();
 
+      const btn = document.getElementById('generate-btn');
+      const btnIcon = document.getElementById('generate-btn-icon');
+      const btnText = document.getElementById('generate-btn-text');
+
+      // Loading state
+      btn.classList.add('loading');
+      btn.disabled = true;
+      btnIcon.innerHTML = '<div class="spinner"></div>';
+      btnText.textContent = 'Generating…';
+
       const systemType = document.getElementById('system-select').value;
       const predicateRule = document.getElementById('predicate-rule-select').value;
       const electronicReliance = document.getElementById('electronic-reliance-select').value;
       const report = MOCK_REPORTS[systemType];
       currentReport = report;
 
-      renderReport(report, predicateRule === 'yes' && electronicReliance === 'yes');
-      resetReviewPanel(report);
-      switchPage('report-view');
+      // Simulate brief processing then show success
+      setTimeout(function() {
+        btn.classList.remove('loading');
+        btn.classList.add('success');
+        btnIcon.innerHTML = '<svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        btnText.textContent = 'Assessment Ready';
+
+        setTimeout(function() {
+          renderReport(report, predicateRule === 'yes' && electronicReliance === 'yes');
+          resetReviewPanel(report);
+          // Reset button for next time
+          btn.classList.remove('success');
+          btn.disabled = false;
+          btnIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
+          btnText.textContent = 'Generate Assessment';
+          switchPage('report-view');
+        }, 700);
+      }, 1400);
     }
 
     function renderReport(report, part11Confirmed) {
